@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Barcode Printing</title>
+  <style>
+    body { font-family: Arial; margin: 50px; }
+    label { display: block; margin-top: 10px; }
+    input, select, button { margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h2>Barcode Printing</h2>
+
+  <label>Printer:</label>
+  <select id="printerSelect">
+    <option value="PM45">PM45</option>
+  </select>
+
+  <label>Barcode Number:</label>
+  <input id="barcodeInput" value="25N000007">
+  <small>Last N# (6)</small>
+
+  <label>Print Quantity:</label>
+  <input id="quantityInput" type="number" value="100" max="400">
+  <small>(MAX = 400)</small>
+
+  <br><br>
+  <button onclick="printBarcodes()">PRINT BARCODE</button>
+
+  <script>
+    async function printBarcodes() {
+      const base = document.getElementById("barcodeInput").value.slice(0, 3);
+      const startNum = parseInt(document.getElementById("barcodeInput").value.slice(3));
+      const qty = parseInt(document.getElementById("quantityInput").value);
+
+      const response = await fetch('/api/print', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ baseBarcode: base, quantity: qty })
+      });
+
+      const result = await response.json();
+      alert(result.success ? 'Barcodes sent to printer!' : 'Failed to print.');
+    }
+  </script>
+</body>
+</html>
